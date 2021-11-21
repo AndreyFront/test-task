@@ -1,0 +1,22 @@
+:root {
+    /* Colors */
+
+    --main-bg-color: #fff;
+    --main-text-color: #1C1C1C;
+    --desc-text-color: #787878;
+    --active-color: #117DC1;
+    --color-white: #fff;
+
+    /* Fonts */
+
+    --main-font: 'Roboto', sans-serif;
+
+    /* Sizes */
+
+    --main-container: 744px;
+
+    /* Transitions */ 
+
+    --main-transition: 0.3s all;
+
+}

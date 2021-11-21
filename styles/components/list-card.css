@@ -1,0 +1,9 @@
+.list-card {
+    display: grid;
+    grid-template-columns: repeat(3, 150px);
+    grid-gap: 42px;
+}
+
+.list-card--content-center {
+    justify-content: center;
+}

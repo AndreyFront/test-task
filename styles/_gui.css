@@ -1,0 +1,123 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    user-select: none;
+    font-family: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    cursor: pointer;
+    color: inherit;
+    text-align: center;
+    text-decoration-line: none;
+    background-color: transparent;
+    transition: var(--main-transition);
+}
+    
+.btn:hover,
+.btn:focus {
+    color: inherit;
+    text-decoration-line: none;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: initial;
+}
+
+.btn__text {
+    text-overflow: ellipsis;
+    transition: var(--main-transition);
+}
+
+.btn--default {
+    width: 100%;
+    height: 55px;
+    padding: 5px 10px;
+    border-radius: 16px;
+}
+
+.btn--default:hover .btn__text {
+    color: var(--active-color);
+}
+
+.btn--default-active {
+    background: #EDF9FF;
+    cursor: initial;
+}
+
+.btn--default-active .btn__text {
+    color: var(--active-color);
+}
+
+/* Marker list */
+
+.marker-list {
+    position: relative;
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--active-color);
+    transition: var(--main-transition);
+}
+
+.marker-list::before,
+.marker-list::after,
+.marker-list--active::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-white);
+    background-color: var(--color-white);
+    transition: var(--main-transition);
+}
+
+.marker-list::before {
+    width: 14px;
+    height: 2px;
+}
+
+.marker-list::after {
+    width: 2px;
+    height: 14px;
+}
+
+.marker-list--active::before {
+    width: 14px;
+    height: 2px;
+}
+
+.marker-list--active::after {
+    opacity: 0;
+    height: 0;
+}
+
+/* Favorites-icon */
+
+.favorites-icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url("../static/img/star_empty.png");
+    cursor: pointer;
+    transition: var(--main-transition);
+}
+
+.favorites-icon--active {
+    background-image: url("../static/img/star_active.png");
+    animation: pulse 1s forwards;
+}
+
+@keyframes pulse {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.2);}
+    100% {transform: scale(1);}
+}
