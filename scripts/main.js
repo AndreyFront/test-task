@@ -1,4 +1,4 @@
-window.onload = function() {
+window.onload = () => {
 
     /* Получение и работа с данными */
 
@@ -7,6 +7,10 @@ window.onload = function() {
     const requestUsers = 'https://json.medrating.org/users/'
     const requestAlbums = 'https://json.medrating.org/albums?userId='
     const requestImage = 'https://json.medrating.org/photos?albumId='
+
+    let arrayUsers = []
+    let arrayAlbums = []
+    let arrayImages = [1, 2]
 
     function sendRequest(method, url) {
         try {
@@ -27,22 +31,20 @@ window.onload = function() {
             console.log(e)
         }
     }
-
-    let arrayUsers = []
-    let arrayAlbums = []
           
     sendRequest('GET', requestUsers)
         .then(dataUsers => {
             const listLvl1 = document.querySelector('.list[data-lvl-one]')
             dataUsers.forEach((user) => {
                 arrayUsers.push(user.id)
-                listLvl1.insertAdjacentHTML('beforeEnd', `
-                    <li class="list__item" data-user-id="${user.id}">
-                        <div class="list__block-item">
-                            <span class="marker-list"></span>
-                            <span class="list__text">${user.name}</span>
-                        </div>
-                    </li>
+                listLvl1.insertAdjacentHTML('beforeEnd', 
+                    `
+                        <li class="list__item" data-user-id="${user.id}">
+                            <div class="list__block-item">
+                                <span class="marker-list"></span>
+                                <span class="list__text">${user.name}</span>
+                            </div>
+                        </li>
                     `
                 )
             })
@@ -50,7 +52,6 @@ window.onload = function() {
             content.addEventListener('click', (event) => {
                 if (event.target.closest('.list__block-item')) {
                     const listItem = event.target.closest('.list__block-item')
-                    console.log(listItem)
                     try {
                         if (!listItem.parentNode.hasAttribute('data-available') && listItem.parentNode.hasAttribute('data-user-id')) {
                             listItem.parentNode.setAttribute('data-available', '')
@@ -65,13 +66,14 @@ window.onload = function() {
                                         )
                                         dataAlbums.forEach((album) => {
                                             arrayAlbums.push(album.id)
-                                            listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', `
-                                                <li class="list__item" data-album-id="${album.id}">
-                                                    <div class="list__block-item">
-                                                        <span class="marker-list"></span>
-                                                        <span class="list__text">${album.title}</span>
-                                                    </div>
-                                                </li>
+                                            listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
+                                                `
+                                                    <li class="list__item" data-album-id="${album.id}">
+                                                        <div class="list__block-item">
+                                                            <span class="marker-list"></span>
+                                                            <span class="list__text">${album.title}</span>
+                                                        </div>
+                                                    </li>
                                                 `
                                             )
                                         })
@@ -89,22 +91,26 @@ window.onload = function() {
                                 .then((dataImage) => {
                                     if (arrayAlbums.indexOf(dataImage[0].albumId) !== -1 && parentListIten === dataImage[0].albumId) {
                                         const listItem = document.querySelector(`.list__item[data-album-id="${dataImage[0].albumId}"]`)
-                                        listItem.insertAdjacentHTML('beforeEnd', `
-                                            <ul class="list list-card hidden" style="display: none;" data-lvl-three></ul>
+                                        listItem.insertAdjacentHTML('beforeEnd', 
+                                            `
+                                                <ul class="list list-card hidden" style="display: none;" data-lvl-three></ul>
                                             `
                                         )
-            
+                                        let activeIcon = ''
                                         dataImage.forEach((image) => {
-                                            listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', `
-                                                <li class="list-card__item">
-                                                    <div class="card">
-                                                        <div class="card__block-img">
-                                                            <img src="${image.thumbnailUrl}" data-src-full="${image.url}" alt="" class="card__img">
-                                                            <span class="card__data-title">${image.title}</span>
-                                                            <span class="favorites-icon"></span>
+                                            activeIcon = ''
+                                            if (arrayImages.indexOf(image.id) !== -1) activeIcon = 'favorites-icon--active'
+                                            listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
+                                                `
+                                                    <li class="list-card__item">
+                                                        <div class="card">
+                                                            <div class="card__block-img">
+                                                                <img src="${image.thumbnailUrl}" data-src-full="${image.url}" alt="" class="card__img">
+                                                                <span class="card__data-title">${image.title}</span>
+                                                                <span class="favorites-icon ${activeIcon}" data-id-image="${image.id}"></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
+                                                    </li>
                                                 `
                                             )
                                         })
@@ -222,4 +228,18 @@ window.onload = function() {
         closeModal(modalOverlay, modalWindow, 'modal-window--active')
         closeModal(modalClose, modalWindow, 'modal-window--active')
     }
+
+    /* Добавление и удаление картинок в избранное */
+
+    content.addEventListener('click', (event) => {
+        if (event.target.closest('.favorites-icon')) {
+            const favoritesIcon = event.target.closest('.favorites-icon')
+            if (!favoritesIcon.classList.contains('favorites-icon--active')) {
+                arrayImages.push(favoritesIcon.getAttribute('data-id-image'))
+            } else {
+                arrayImages.splice(arrayImages.indexOf(favoritesIcon.getAttribute('data-id-image')), 1)
+            }
+            console.log(arrayImages)
+        }
+    })
 }
