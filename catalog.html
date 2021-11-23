@@ -13,46 +13,18 @@
             <nav class="nav">
                 <ul class="nav__list">
                     <li class="nav__item">
-                        <a href="#" class="nav__link btn btn--default btn--default-active">
+                        <a href="/" onclick="router('#/catalog')" data-url="#/catalog" class="nav__link btn btn--default btn--default-active">
                             <span class="btn__text">Каталог</span>
                         </a>
                     </li>
                     <li class="nav__item">
-                        <a href="favorites.html" class="nav__link btn btn--default">
+                        <a href="/" onclick="router('#/favorites')" data-url="#/favorites" class="nav__link btn btn--default">
                             <span class="btn__text">Избранное</span>
                         </a>
                     </li>
                 </ul>
             </nav>
-            <div class="content">
-                <ul class="list" data-lvl-one>
-                    <!-- <li class="list__item">
-                        <div class="list__block-item">
-                            <span class="marker-list"></span>
-                            <span class="list__text">Ervin Howell</span>
-                        </div>
-                        <ul class="list hidden" style="display: none;" data-lvl-two>
-                            <li class="list__item">
-                                <div class="list__block-item">
-                                    <span class="marker-list"></span>
-                                    <span class="list__text">consequatur autem doloribus natus consectetur</span>
-                                </div>
-                                <ul class="list list-card hidden" style="display: none;" data-lvl-three>
-                                    <li class="list-card__item">
-                                        <div class="card">
-                                            <div class="card__block-img">
-                                                <img src="https://via.placeholder.com/150/e2223e" data-src-full="https://via.placeholder.com/600/e2223e" alt="" class="card__img">
-                                                <span class="card__data-title">dolorem cumque quo nihil inventore enim</span>
-                                                <span class="favorites-icon"></span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li> -->
-                </ul>
-            </div>
+            <div class="content"></div>
         </div>
     </main>
 
@@ -67,6 +39,5 @@
     </div>
 
     <script src="scripts/main.js"></script>
-    <!-- <script src="scripts/router.js"></script> -->
 </body>
 </html>

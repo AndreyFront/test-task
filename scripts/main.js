@@ -1,4 +1,4 @@
-window.onload = () => {
+// window.onload = () => {
 
     /* Получение и работа с данными */
 
@@ -31,105 +31,7 @@ window.onload = () => {
             console.log(e)
         }
     }
-          
-    sendRequest('GET', requestUsers)
-        .then(dataUsers => {
-            const listLvl1 = document.querySelector('.list[data-lvl-one]')
-            dataUsers.forEach((user) => {
-                arrayUsers.push(user.id)
-                listLvl1.insertAdjacentHTML('beforeEnd', 
-                    `
-                        <li class="list__item" data-user-id="${user.id}">
-                            <div class="list__block-item">
-                                <span class="marker-list"></span>
-                                <span class="list__text">${user.name}</span>
-                            </div>
-                        </li>
-                    `
-                )
-            })
-        }).then(() => {
-            content.addEventListener('click', (event) => {
-                if (event.target.closest('.list__block-item')) {
-                    const listItem = event.target.closest('.list__block-item')
-                    try {
-                        if (!listItem.parentNode.hasAttribute('data-available') && listItem.parentNode.hasAttribute('data-user-id')) {
-                            listItem.parentNode.setAttribute('data-available', '')
-                            let parentListIten = Number(listItem.parentNode.getAttribute('data-user-id'))
-                            sendRequest('GET', `${requestAlbums + parentListIten}`)
-                                .then((dataAlbums) => {
-                                    if (arrayUsers.indexOf(dataAlbums[0].userId) !== -1 && parentListIten === dataAlbums[0].userId) {
-                                        const listItem = document.querySelector(`.list__item[data-user-id="${dataAlbums[0].userId}"]`)
-                                        listItem.insertAdjacentHTML('beforeEnd', `
-                                            <ul class="list hidden" style="display: none;" data-lvl-two></ul>
-                                            `
-                                        )
-                                        dataAlbums.forEach((album) => {
-                                            arrayAlbums.push(album.id)
-                                            listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
-                                                `
-                                                    <li class="list__item" data-album-id="${album.id}">
-                                                        <div class="list__block-item">
-                                                            <span class="marker-list"></span>
-                                                            <span class="list__text">${album.title}</span>
-                                                        </div>
-                                                    </li>
-                                                `
-                                            )
-                                        })
-                                    }
-                                }).then(() => {
-                                    toggleList(listItem)
-                                })
-                                .catch(err => console.log(err))
-                        }
         
-                        if (!listItem.parentNode.hasAttribute('data-available') && listItem.parentNode.hasAttribute('data-album-id')) {
-                            listItem.parentNode.setAttribute('data-available', '')
-                            let parentListIten = Number(listItem.parentNode.getAttribute('data-album-id'))
-                            sendRequest('GET', `${requestImage + parentListIten}`)
-                                .then((dataImage) => {
-                                    if (arrayAlbums.indexOf(dataImage[0].albumId) !== -1 && parentListIten === dataImage[0].albumId) {
-                                        const listItem = document.querySelector(`.list__item[data-album-id="${dataImage[0].albumId}"]`)
-                                        listItem.insertAdjacentHTML('beforeEnd', 
-                                            `
-                                                <ul class="list list-card hidden" style="display: none;" data-lvl-three></ul>
-                                            `
-                                        )
-                                        let activeIcon = ''
-                                        dataImage.forEach((image) => {
-                                            activeIcon = ''
-                                            if (arrayImages.indexOf(image.id) !== -1) activeIcon = 'favorites-icon--active'
-                                            listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
-                                                `
-                                                    <li class="list-card__item">
-                                                        <div class="card">
-                                                            <div class="card__block-img">
-                                                                <img src="${image.thumbnailUrl}" data-src-full="${image.url}" alt="" class="card__img">
-                                                                <span class="card__data-title">${image.title}</span>
-                                                                <span class="favorites-icon ${activeIcon}" data-id-image="${image.id}"></span>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                `
-                                            )
-                                        })
-                                    }
-                                }).then(() => {
-                                    toggleList(listItem)
-                                })
-                                .catch(err => console.log(err))
-                        }
-                        toggleList(listItem)
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-            })
-        })
-        .catch(err => console.log(err))
-
-
     function toggleList(listItem) {
         if (listItem.nextElementSibling.classList[0] === 'list') {
             if (!listItem.nextElementSibling.classList.contains('hidden')) {
@@ -167,6 +69,18 @@ window.onload = () => {
             }
         }
     }
+
+    /* Удаление класса */
+
+    function removeClass(elem, removeClass) {
+        document.querySelector(elem).classList.remove(removeClass)
+    }
+
+    /* Добавление класса */
+
+    function addClass(elem, addClass) {
+        document.querySelector(elem).classList.add(addClass)
+    }
     
     /* Переключение состояния */
 
@@ -190,7 +104,7 @@ window.onload = () => {
             }
         })
     }
-
+    toggleClass('.nav', '.nav__link', 'btn--default-active')
     toggleClass('.card', '.favorites-icon', 'favorites-icon--active', 2)
 
     /* Модальное окно */
@@ -242,4 +156,148 @@ window.onload = () => {
             console.log(arrayImages)
         }
     })
-}
+
+
+// }
+
+    /* Роутинг */
+
+    window.addEventListener('hashchange', () => {
+        const location = window.location.hash
+        if (location) {
+            router(location)
+        }
+    })
+
+    window.addEventListener('load', () => {
+        const location = window.location.hash
+        if (location) {
+            router(location)
+        }
+    })
+
+    function router(location) {
+        const content = document.querySelector('.content')
+        this.event.preventDefault()
+
+        history.pushState('', '', location)
+
+        switch (location) {
+            case '#/catalog':
+                addClass('.nav__link[data-url="#/catalog"]', 'btn--default-active')
+                removeClass('.nav__link[data-url="#/favorites"]', 'btn--default-active')
+                content.innerHTML = ' '
+                sendRequest('GET', requestUsers)
+                .then((dataUsers) => {
+                    
+                    content.insertAdjacentHTML('beforeEnd', 
+                        `
+                            <ul class="list" data-lvl-one></ul>
+                        `
+                    )
+                    return dataUsers
+                })
+                .then((dataUsers) => {
+                    const listLvl1 = document.querySelector('.list[data-lvl-one]')
+                    dataUsers.forEach((user) => {
+                        arrayUsers.push(user.id)
+                        listLvl1.insertAdjacentHTML('beforeEnd', 
+                            `
+                                <li class="list__item" data-user-id="${user.id}">
+                                    <div class="list__block-item">
+                                        <span class="marker-list"></span>
+                                        <span class="list__text">${user.name}</span>
+                                    </div>
+                                </li>
+                            `
+                        )
+                    })
+                }).then(() => {
+                    content.addEventListener('click', (event) => {
+                        if (event.target.closest('.list__block-item')) {
+                            const listItem = event.target.closest('.list__block-item')
+                            try {
+                                if (!listItem.parentNode.hasAttribute('data-available') && listItem.parentNode.hasAttribute('data-user-id')) {
+                                    listItem.parentNode.setAttribute('data-available', '')
+                                    let parentListIten = Number(listItem.parentNode.getAttribute('data-user-id'))
+                                    sendRequest('GET', `${requestAlbums + parentListIten}`)
+                                        .then((dataAlbums) => {
+                                            if (arrayUsers.indexOf(dataAlbums[0].userId) !== -1 && parentListIten === dataAlbums[0].userId) {
+                                                const listItem = document.querySelector(`.list__item[data-user-id="${dataAlbums[0].userId}"]`)
+                                                listItem.insertAdjacentHTML('beforeEnd', `
+                                                    <ul class="list hidden" style="display: none;" data-lvl-two></ul>
+                                                    `
+                                                )
+                                                dataAlbums.forEach((album) => {
+                                                    arrayAlbums.push(album.id)
+                                                    listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
+                                                        `
+                                                            <li class="list__item" data-album-id="${album.id}">
+                                                                <div class="list__block-item">
+                                                                    <span class="marker-list"></span>
+                                                                    <span class="list__text">${album.title}</span>
+                                                                </div>
+                                                            </li>
+                                                        `
+                                                    )
+                                                })
+                                            }
+                                        }).then(() => {
+                                            toggleList(listItem)
+                                        })
+                                        .catch(err => console.log(err))
+                                }
+                
+                                if (!listItem.parentNode.hasAttribute('data-available') && listItem.parentNode.hasAttribute('data-album-id')) {
+                                    listItem.parentNode.setAttribute('data-available', '')
+                                    let parentListIten = Number(listItem.parentNode.getAttribute('data-album-id'))
+                                    sendRequest('GET', `${requestImage + parentListIten}`)
+                                        .then((dataImage) => {
+                                            if (arrayAlbums.indexOf(dataImage[0].albumId) !== -1 && parentListIten === dataImage[0].albumId) {
+                                                const listItem = document.querySelector(`.list__item[data-album-id="${dataImage[0].albumId}"]`)
+                                                listItem.insertAdjacentHTML('beforeEnd', 
+                                                    `
+                                                        <ul class="list list-card hidden" style="display: none;" data-lvl-three></ul>
+                                                    `
+                                                )
+                                                let activeIcon = ''
+                                                dataImage.forEach((image) => {
+                                                    activeIcon = ''
+                                                    if (arrayImages.indexOf(image.id) !== -1) activeIcon = 'favorites-icon--active'
+                                                    listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
+                                                        `
+                                                            <li class="list-card__item">
+                                                                <div class="card">
+                                                                    <div class="card__block-img">
+                                                                        <img src="${image.thumbnailUrl}" data-src-full="${image.url}" alt="" class="card__img">
+                                                                        <span class="card__data-title">${image.title}</span>
+                                                                        <span class="favorites-icon ${activeIcon}" data-id-image="${image.id}"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        `
+                                                    )
+                                                })
+                                            }
+                                        }).then(() => {
+                                            toggleList(listItem)
+                                        })
+                                        .catch(err => console.log(err))
+                                }
+                                toggleList(listItem)
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    })
+                })
+                .catch(err => console.log(err))
+                break
+            case '#/favorites':
+                removeClass('.nav__link[data-url="#/catalog"]', 'btn--default-active')
+                addClass('.nav__link[data-url="#/favorites"]', 'btn--default-active')
+                content.innerHTML = ' '
+                content.innerHTML = '<h1>Избранное</h1>'
+                break
+        }
+    }
