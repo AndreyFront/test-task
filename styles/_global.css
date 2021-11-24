@@ -33,6 +33,25 @@ html, body {
     margin-top: 40px;
 }
 
+.content--active {
+    animation: active 0.7s forwards !important;
+}
+
+@keyframes active {
+    0%{
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hide {
+    display: none !important;
+}
+
 .hidden {
     animation: hiddenList 0.3s linear forwards;
 }

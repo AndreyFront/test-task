@@ -1,0 +1,42 @@
+.notice {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.notice--mt {
+    margin-top: 100px;
+}
+
+.notice__block-img {
+    display: grid;
+    margin: 0 auto;
+    max-width: 264px;
+    max-height: 198px;
+}
+
+.notice__img {
+    width: 100%;
+    height: 100%;
+}
+
+.notice__block-info {
+    margin-top: 32px;
+}
+
+.notice__block-title {
+    text-align: center;
+}
+
+.notice__title {
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 130%;
+}
+
+.notice__block-desc {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.notice__desc {}
