@@ -188,17 +188,21 @@ content.addEventListener('click', (event) => {
         const dataImageSrc = cardImg.getAttribute('src')
         const datdImageSrcFull = cardImg.getAttribute('data-src-full')
         const cardImageId = cardImg.getAttribute('data-id-image')
+        try {
+            if (!favoritesIcon.classList.contains('favorites-icon--active')) {
 
-        if (!favoritesIcon.classList.contains('favorites-icon--active')) {
+                updateLocalStorage()
 
-            updateLocalStorage()
+                arrayImages.push({id: cardImageId, src: dataImageSrc, srcFull: datdImageSrcFull, title: cardTitleText})
 
-            arrayImages.push({id: cardImageId, src: dataImageSrc, srcFull: datdImageSrcFull, title: cardTitleText})
-            localStorage.setItem('favoritesImage', JSON.stringify(arrayImages))
-        } else {
-            arrayImages = JSON.parse(localStorage.getItem('favoritesImage'))
-            arrayImages.splice(arrayImages.findIndex(el => el.id === cardImageId), 1)
-            localStorage.setItem('favoritesImage', JSON.stringify(arrayImages))
+                localStorage.setItem('favoritesImage', JSON.stringify(arrayImages))
+            } else {
+                arrayImages = JSON.parse(localStorage.getItem('favoritesImage'))
+                arrayImages.splice(arrayImages.findIndex(el => el.id === cardImageId), 1)
+                localStorage.setItem('favoritesImage', JSON.stringify(arrayImages))
+            }
+        } catch (e) {
+            console.log(e)
         }
     }
 })
@@ -243,7 +247,7 @@ function router(location) {
 
             updateLocalStorage()
 
-            if (arrayImages !== undefined) {
+            if (arrayImages !== undefined && arrayImages !== null) {
                 if (arrayImages.length > 0) {
                     arrayImages.forEach((image) => {
                         content.querySelector('ul').insertAdjacentHTML('beforeEnd', 
@@ -357,7 +361,7 @@ function router(location) {
 
                                             dataImage.forEach((image) => {
                                                 activeIcon = ''
-                                                if (arrayImages !== undefined) {
+                                                if (arrayImages !== undefined && arrayImages !== null) {
                                                     if (arrayImages.findIndex(el => el.id == image.id) != -1) activeIcon = 'favorites-icon--active'
                                                 }
                                                 listItem.querySelector('ul').insertAdjacentHTML('beforeEnd', 
