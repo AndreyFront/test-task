@@ -22,23 +22,8 @@ function sendRequest(method, url) {
         
             return response.json().then(error => {
                 content.innerHTML = ' '
-                content.insertAdjacentHTML('beforeEnd',
-                    `
-                        <div class="notice notice--mt">
-                            <div class="notice__block-img">
-                                <img src="./static/img/error.png" class="notice__img" alt="">
-                            </div>
-                            <div class="notice__block-info">
-                                <div class="notice__block-title">
-                                    <span class="notice__title">Сервер не отвечает</span>
-                                </div>
-                                <div class="notice__block-desc">
-                                    <span class="notice__desc">Уже работаем над этим</span>
-                                </div>
-                            </div>
-                        </div>
-                    `
-                )
+                content.insertAdjacentHTML('beforeEnd', notice('./static/img/error.png', 'Сервер не отвечает', 'Уже работаем над этим', true))
+
                 const e = new Error('Что-то пошло не так')
                 e.data = error
                 console.log(error)
@@ -50,48 +35,64 @@ function sendRequest(method, url) {
     }
 }
 
+// Уведомления 
+
+function notice(image, title, desc, needMT = false) {
+    (needMT !== false) ? needMT = 'notice--mt' : needMT = ''
+    return  `
+                <div class="notice ${needMT}">
+                    <div class="notice__block-img">
+                        <img src="${image}" class="notice__img" alt="">
+                    </div>
+                    <div class="notice__block-info">
+                        <div class="notice__block-title">
+                            <span class="notice__title">${title}</span>
+                        </div>
+                        <div class="notice__block-desc">
+                            <span class="notice__desc">${desc}</span>
+                        </div>
+                    </div>
+                </div>
+            `
+}
+
 // Работа списка
     
 function toggleList(listItem) {
-    try {
-        const list = listItem.nextElementSibling
-        if (list) {
-            if (!list.classList.contains('hidden')) {
-                list.classList.remove('show')
-                list.classList.add('hidden')
+    const list = listItem.nextElementSibling
+    if (list) {
+        if (!list.classList.contains('hidden')) {
+            list.classList.remove('show')
+            list.classList.add('hidden')
 
-                list.animate([
-                    { height: list.offsetHeight + 'px' },
-                    { height: 0 },
-                ], {
-                    duration: 400,
-                    easing: 'linear',
-                })
+            list.animate([
+                { height: list.offsetHeight + 'px' },
+                { height: 0 },
+            ], {
+                duration: 400,
+                easing: 'linear',
+            })
 
-                setTimeout(() => {
-                    list.style.display = 'none'
-                    list.style.height = 'auto'
-                }, 400)
+            setTimeout(() => {
+                list.style.display = 'none'
+                list.style.height = 'auto'
+            }, 400)
 
-                listItem.querySelector('.marker-list').classList.remove('marker-list--active')
-            } else {
-                list.classList.remove('hidden')
-                list.classList.add('show')
-                // setTimeout(() => {
-                    list.style.display = 'grid'
-                    list.animate([
-                        { height: 0 },
-                        { height: list.offsetHeight + 'px' },
-                    ], {
-                        duration: 400,
-                        easing: 'linear',
-                    })
-                // }, 0)
-                listItem.querySelector('.marker-list').classList.add('marker-list--active')
-            }
+            listItem.querySelector('.marker-list').classList.remove('marker-list--active')
+        } else {
+            list.classList.remove('hidden')
+            list.classList.add('show')
+
+            list.style.display = 'grid'
+            list.animate([
+                { height: 0 },
+                { height: list.offsetHeight + 'px' },
+            ], {
+                duration: 400,
+                easing: 'linear',
+            })
+            listItem.querySelector('.marker-list').classList.add('marker-list--active')
         }
-    } catch (e) {
-        console.log(e)
     }
 }
 
@@ -264,23 +265,7 @@ function router(location) {
                     })
                 } else {
                     content.innerHTML = ' '
-                    content.insertAdjacentHTML('beforeEnd',
-                        `
-                            <div class="notice notice--mt">
-                                <div class="notice__block-img">
-                                    <img src="./static/img/empty.png" class="notice__img" alt="">
-                                </div>
-                                <div class="notice__block-info">
-                                    <div class="notice__block-title">
-                                        <span class="notice__title">Список избранного пуст</span>
-                                    </div>
-                                    <div class="notice__block-desc">
-                                        <span class="notice__desc">Добавляйте изображения, нажимая на звездочки</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `
-                    )
+                    content.insertAdjacentHTML('beforeEnd', notice('./static/img/empty.png', 'Список избранного пуст', 'Добавляйте изображения, нажимая на звездочки', true))
                 }
             }
             break
@@ -317,7 +302,7 @@ function router(location) {
                         `
                     )
                 })
-            })
+            }).catch(err => console.log(err))
             .then(() => {
                 content.addEventListener('click', (event) => {
                     if (event.target.closest('.list__block-item')) {
@@ -409,5 +394,7 @@ function router(location) {
 }
 
 content.addEventListener('click', (event) => {
-    toggleList(event.target.closest('.list__block-item'))
+    if (event.target.closest('.list__block-item')) {
+        toggleList(event.target.closest('.list__block-item'))
+    }
 })
